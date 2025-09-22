@@ -226,37 +226,35 @@
                     forecastChart.destroy();
                 }
                 
-                currentSalesData = salesData; // Store current sales data for slider updates
+                currentSalesData = salesData; 
 
                 const ctrData = generateLinearData(initialData.ctr_start, targetCtr, labels.length);
                 const crData = generateLinearData(initialData.cr_start, targetCr, labels.length);
 
                 forecastChart = new Chart(ctx, {
-                    type: 'line',
                     data: {
                         labels: labels,
                         datasets: [{
+                            type: 'bar',
                             label: 'Click-Through Rate (CTR)',
                             data: ctrData,
-                            borderColor: '#22c55e', // green-500
-                            backgroundColor: '#22c55e20',
-                            borderWidth: 3,
-                            fill: false,
-                            tension: 0.4,
+                            backgroundColor: '#22c55e80',
+                            borderColor: '#16a34a',
+                            borderWidth: 1,
                             yAxisID: 'y'
                         }, {
+                            type: 'bar',
                             label: 'Conversion Rate (CR)',
                             data: crData,
-                            borderColor: '#8b5cf6', // purple-500
-                            backgroundColor: '#8b5cf620',
-                            borderWidth: 3,
-                            fill: false,
-                            tension: 0.4,
+                            backgroundColor: '#8b5cf680',
+                            borderColor: '#7c3aed',
+                            borderWidth: 1,
                             yAxisID: 'y'
                         }, {
+                            type: 'line',
                             label: 'Projected Sales (USD)',
                             data: salesData,
-                            borderColor: '#f59e0b', // yellow-500
+                            borderColor: '#f59e0b',
                             backgroundColor: '#f59e0b20',
                             borderWidth: 3,
                             fill: true,
