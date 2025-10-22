@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIO - 2025 E-commerce Forecast: Executive Summary</title>
+    <title>MIO - 2025 E-commerce Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,15 @@
         .kpi-card {
             transition: all 0.3s ease-in-out;
         }
+        .tab-btn {
+            transition: all 0.2s ease-in-out;
+            scroll-margin-top: 10px; /* For smooth scrolling */
+        }
+        .tab-btn.active {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background-color: #eff6ff;
+        }
         .scenario-btn {
             transition: all 0.2s ease-in-out;
         }
@@ -21,398 +30,292 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
+        .funnel-step {
+            clip-path: polygon(0% 0%, 90% 0, 100% 50%, 90% 100%, 0% 100%);
+        }
+        @media (max-width: 767px) {
+            .funnel-step {
+                clip-path: polygon(0% 0%, 100% 0, 100% 90%, 50% 100%, 0 90%);
+            }
+        }
+        .funnel-step:last-child {
+            clip-path: none;
+        }
+        .tab-container {
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+        .tab-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
     <div class="container mx-auto p-4 md:p-8">
         <!-- Header -->
-        <header class="mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">MIO 2025 E-commerce Forecast</h1>
-            <p class="text-lg text-gray-600 mt-1">Interactive Executive Summary & Scenario Planning</p>
+        <header class="mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">MIO 2025 E-commerce Dashboard</h1>
+            <p class="text-lg text-gray-600 mt-1">Executive Summary: Forecasts, Funnels & Performance</p>
         </header>
 
-        <!-- Main Dashboard -->
-        <div class="space-y-8">
-
-            <!-- Scenario Controls & KPIs -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-gray-800">Scenario Planning</h2>
-                <p class="text-sm text-gray-600 mb-4">Select a growth scenario to see its impact on your forecast. The "Realistic" scenario is based on the current action plan.</p>
-                
-                <!-- Scenario Buttons -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                     <button id="pessimistic-btn" class="scenario-btn w-full text-left p-3 rounded-lg bg-gray-100 hover:bg-red-100 border border-gray-200 hover:border-red-300">
-                        <span class="font-bold text-red-600">Pessimistic</span>
-                        <span class="block text-xs text-gray-500">Slower market adoption and campaign results.</span>
-                    </button>
-                    <button id="realistic-btn" class="scenario-btn w-full text-left p-3 rounded-lg bg-blue-100 border border-blue-300 active">
-                        <span class="font-bold text-blue-600">Realistic</span>
-                        <span class="block text-xs text-gray-500">Achieves targets outlined in the action plan.</span>
-                    </button>
-                    <button id="optimistic-btn" class="scenario-btn w-full text-left p-3 rounded-lg bg-gray-100 hover:bg-green-100 border border-gray-200 hover:border-green-300">
-                        <span class="font-bold text-green-600">Optimistic</span>
-                        <span class="block text-xs text-gray-500">Exceeds targets due to strong market response.</span>
-                    </button>
-                </div>
-
-                <!-- KPI Cards -->
-                 <h3 class="text-lg font-bold mt-6 mb-4 text-gray-800">Key Metrics Forecast</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="kpi-card bg-yellow-50 p-5 rounded-xl border border-yellow-200 text-center">
-                        <h3 class="text-sm font-semibold text-yellow-800 uppercase">Avg. Monthly Sales</h3>
-                        <p id="kpi-avg-sales" class="text-3xl font-bold text-yellow-900 mt-2">$9.6k</p>
-                        <p class="text-xs text-yellow-700">Aug'25-Feb'26</p>
-                    </div>
-                    <div class="kpi-card bg-blue-50 p-5 rounded-xl border border-blue-200 text-center">
-                        <h3 class="text-sm font-semibold text-blue-800 uppercase">Total Sales</h3>
-                        <p id="kpi-total-sales" class="text-3xl font-bold text-blue-900 mt-2">$67.0k</p>
-                        <p class="text-xs text-blue-700">Aug'25-Feb'26</p>
-                    </div>
-                    <div class="kpi-card bg-green-50 p-5 rounded-xl border border-green-200 text-center">
-                        <h3 class="text-sm font-semibold text-green-800 uppercase">Target CTR</h3>
-                        <p id="kpi-ctr" class="text-3xl font-bold text-green-900 mt-2">0.8%</p>
-                        <p class="text-xs text-green-700">by Feb 2026</p>
-                    </div>
-                    <div class="kpi-card bg-purple-50 p-5 rounded-xl border border-purple-200 text-center">
-                        <h3 class="text-sm font-semibold text-purple-800 uppercase">Target Conv. Rate</h3>
-                        <p id="kpi-cr" class="text-3xl font-bold text-purple-900 mt-2">0.5%</p>
-                        <p class="text-xs text-purple-700">by Feb 2026</p>
-                    </div>
-                </div>
-                 
-                 <!-- Interactive Sliders -->
-                <div class="mt-6 pt-6 border-t border-gray-200">
-                     <h3 class="text-lg font-bold mb-4 text-gray-800">Manual Adjustment</h3>
-                     <p class="text-sm text-gray-600 mb-4">Fine-tune the end-of-period targets for CTR and Conversion Rate to create a custom forecast. Sales data will reflect the last selected scenario.</p>
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <div>
-                             <label for="ctr-slider" class="block text-sm font-medium text-gray-700">Target Click-Through Rate (CTR): <span id="ctr-slider-value" class="font-bold">0.8%</span></label>
-                             <input id="ctr-slider" type="range" min="0.1" max="2.0" value="0.8" step="0.1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                         </div>
-                         <div>
-                             <label for="cr-slider" class="block text-sm font-medium text-gray-700">Target Conversion Rate (CR): <span id="cr-slider-value" class="font-bold">0.5%</span></label>
-                             <input id="cr-slider" type="range" min="0.1" max="1.5" value="0.5" step="0.05" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                         </div>
-                     </div>
-                </div>
-            </div>
-
-            <!-- Main Chart -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-gray-800">Performance Metrics Forecast</h2>
-                <div class="h-96">
-                    <canvas id="forecastChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Strategic Pillars -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Action Plan -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                    <h2 class="text-xl font-bold mb-4 text-gray-800">Growth Action Plan</h2>
-                    <p class="text-sm text-gray-600 mb-4">Key initiatives from the Q3/Q4 action plan designed to drive CTR and Conversion Rate growth.</p>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <span class="font-semibold">Critical Web UX/CRO Sprints:</span>
-                                <p class="text-gray-600">Fixing canonicalization issues and resolving shopping cart bugs while adding trust signals (Security, Shipping Details).</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <span class="font-semibold">Strategic Content & SEO:</span>
-                                <p class="text-gray-600">Weekly B2B blog content production focused on SEO, regular re-indexing, and performance measurement.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <span class="font-semibold">Paid Push Campaigns (B2B & B2C):</span>
-                                <p class="text-gray-600">Targeted campaigns on LinkedIn & YouTube to capture end-of-year B2B demand, followed by a B2C push focusing on 'Small Spaces Solutions'.</p>
-                            </div>
-                        </li>
-                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <span class="font-semibold">B2B Newsletter Engagement:</span>
-                                <p class="text-gray-600">Monthly newsletters focusing on key industry topics, trends, and pain points for Office/Workspace and Hospitality segments.</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Market Context -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                    <h2 class="text-xl font-bold mb-4 text-gray-800">Market Context & Opportunity</h2>
-                     <p class="text-sm text-gray-600 mb-4">Macro trends from market data that support the growth forecast.</p>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                            <div>
-                                <span class="font-semibold">High-Growth Furniture Segments:</span>
-                                <p class="text-gray-600">The plastic furniture segment is projected to grow at ~5% annually, driven by demand for lightweight, cost-effective, and sustainable solutions.</p>
-                            </div>
-                        </li>
-                         <li class="flex items-start">
-                           <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                            <div>
-                                <span class="font-semibold">Healthcare Furniture Market Expansion:</span>
-                                <p class="text-gray-600">A $8.7 trillion industry with 6-7% annual growth, showing increased adoption of modular, mobile, and tech-integrated furniture.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                           <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                            <div>
-                                <span class="font-semibold">E-commerce & Home-Goods Trend:</span>
-                                <p class="text-gray-600">Alignment with strong e-commerce trends in home goods, particularly in modular furniture, acoustic solutions, and room dividers.</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+        <!-- Tabs -->
+        <div class="mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-4 tab-container" aria-label="Tabs">
+                    <button id="tab-mom" class="tab-btn active whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">MoM Comparison</button>
+                    <button id="tab-forecast" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">Forecast vs. Actuals</button>
+                    <button id="tab-funnel" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">4-Month Funnel</button>
+                    <button id="tab-october" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">October Deep Dive</button>
+                    <button id="tab-september" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">September Deep Dive</button>
+                    <button id="tab-august" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">August Deep Dive</button>
+                    <button id="tab-july" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">July Deep Dive</button>
+                </nav>
             </div>
         </div>
+
+        <!-- Tab Content -->
+        <main>
+            <!-- Tab 0: MoM Comparison -->
+            <div id="content-mom" class="space-y-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800">Month-over-Month Performance (Jul-Oct 2025)</h2>
+                    <p class="text-sm text-gray-600 mb-4">Comparison of key metrics highlighting monthly trends and overall growth trajectory.</p>
+                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div class="kpi-card bg-green-50 p-5 rounded-xl border border-green-200"><h3 class="text-sm font-semibold text-green-800 uppercase">Sales Growth</h3><p class="text-3xl font-bold text-green-900 mt-2">+72.6%</p><p class="text-xs text-green-700">Jul vs Oct</p></div>
+                        <div class="kpi-card bg-blue-50 p-5 rounded-xl border border-blue-200"><h3 class="text-sm font-semibold text-blue-800 uppercase">Traffic Growth</h3><p class="text-3xl font-bold text-blue-900 mt-2">+20.2%</p><p class="text-xs text-blue-700">Jul vs Oct</p></div>
+                        <div class="kpi-card bg-purple-50 p-5 rounded-xl border border-purple-200"><h3 class="text-sm font-semibold text-purple-800 uppercase">Conversion Rate</h3><p class="text-3xl font-bold text-purple-900 mt-2">+40.0%</p><p class="text-xs text-purple-700">Jul vs Oct</p></div>
+                        <div class="kpi-card bg-yellow-50 p-5 rounded-xl border border-yellow-200"><h3 class="text-sm font-semibold text-yellow-800 uppercase">Avg. Order Value</h3><p class="text-3xl font-bold text-yellow-900 mt-2">+1.6%</p><p class="text-xs text-yellow-700">Jul vs Oct</p></div>
+                        <div class="kpi-card bg-pink-50 p-5 rounded-xl border border-pink-200"><h3 class="text-sm font-semibold text-pink-800 uppercase">Avg. SEO Position</h3><p class="text-3xl font-bold text-pink-900 mt-2 flex items-center justify-center">10.9 <svg class="w-6 h-6 ml-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg></p><p class="text-xs text-pink-700">Improved from 18.7</p></div>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800">Monthly Performance Comparison</h2>
+                    <div class="h-96"><canvas id="momChart"></canvas></div>
+                </div>
+            </div>
+            
+            <!-- Tab 1: Forecast Content -->
+            <div id="content-forecast" class="hidden space-y-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Scenario Planning</h2>
+                    <p class="text-sm text-gray-600 mb-4">The dashboard includes <span class="font-bold">actual results for Jul-Oct 2025.</span> Select a growth scenario to see its impact on the future forecast.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                        <button id="pessimistic-btn" class="scenario-btn w-full text-left p-3 rounded-lg bg-gray-100 hover:bg-red-100 border border-gray-200 hover:border-red-300"><span class="font-bold text-red-600">Pessimistic</span><span class="block text-xs text-gray-500">Slower market adoption.</span></button>
+                        <button id="realistic-btn" class="scenario-btn w-full text-left p-3 rounded-lg bg-blue-100 border border-blue-300 active"><span class="font-bold text-blue-600">Realistic</span><span class="block text-xs text-gray-500">Achieves planned targets.</span></button>
+                        <button id="optimistic-btn" class="scenario-btn w-full text-left p-3 rounded-lg bg-gray-100 hover:bg-green-100 border border-gray-200 hover:border-green-300"><span class="font-bold text-green-600">Optimistic</span><span class="block text-xs text-gray-500">Exceeds targets.</span></button>
+                    </div>
+                    <h3 class="text-lg font-bold mt-6 mb-4 text-gray-800">Key Metrics Forecast</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="kpi-card bg-yellow-50 p-5 rounded-xl border border-yellow-200 text-center"><h3 class="text-sm font-semibold text-yellow-800 uppercase">Avg. Monthly Sales</h3><p id="kpi-avg-sales" class="text-3xl font-bold text-yellow-900 mt-2">$10.5k</p><p class="text-xs text-yellow-700">Jul'25-Feb'26</p></div>
+                        <div class="kpi-card bg-blue-50 p-5 rounded-xl border border-blue-200 text-center"><h3 class="text-sm font-semibold text-blue-800 uppercase">Total Sales</h3><p id="kpi-total-sales" class="text-3xl font-bold text-blue-900 mt-2">$84.1k</p><p class="text-xs text-blue-700">Jul'25-Feb'26</p></div>
+                        <div class="kpi-card bg-green-50 p-5 rounded-xl border border-green-200 text-center"><h3 class="text-sm font-semibold text-green-800 uppercase">Target CTR</h3><p id="kpi-ctr" class="text-3xl font-bold text-green-900 mt-2">1.0%</p><p class="text-xs text-green-700">by Feb 2026</p></div>
+                        <div class="kpi-card bg-purple-50 p-5 rounded-xl border border-purple-200 text-center"><h3 class="text-sm font-semibold text-purple-800 uppercase">Target Conv. Rate</h3><p id="kpi-cr" class="text-3xl font-bold text-purple-900 mt-2">0.5%</p><p class="text-xs text-purple-700">by Feb 2026</p></div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800">Performance Metrics: Actuals vs. Forecast</h2>
+                    <div class="h-96"><canvas id="forecastChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Marketing Funnel Content -->
+            <div id="content-funnel" class="hidden space-y-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800">Marketing & Sales Funnel (July - October 2025)</h2>
+                    <p class="text-sm text-gray-600 mb-4">Aggregated performance from top-of-funnel marketing activities to bottom-of-funnel sales results.</p>
+                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="kpi-card bg-blue-50 p-5 rounded-xl border border-blue-200 text-center"><h3 class="text-sm font-semibold text-blue-800 uppercase">Total Sessions</h3><p id="kpi-total-sessions" class="text-3xl font-bold text-blue-900 mt-2">25.6k</p></div>
+                        <div class="kpi-card bg-indigo-50 p-5 rounded-xl border border-indigo-200 text-center"><h3 class="text-sm font-semibold text-indigo-800 uppercase">Added to Cart</h3><p id="kpi-added-cart" class="text-3xl font-bold text-indigo-900 mt-2">275</p></div>
+                        <div class="kpi-card bg-purple-50 p-5 rounded-xl border border-purple-200 text-center"><h3 class="text-sm font-semibold text-purple-800 uppercase">Reached Checkout</h3><p id="kpi-reached-checkout" class="text-3xl font-bold text-purple-900 mt-2">259</p></div>
+                        <div class="kpi-card bg-green-50 p-5 rounded-xl border border-green-200 text-center"><h3 class="text-sm font-semibold text-green-800 uppercase">Total Orders</h3><p id="kpi-total-orders" class="text-3xl font-bold text-green-900 mt-2">55</p></div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800">Top of Funnel Performance vs. Sales</h2>
+                    <div class="h-96"><canvas id="marketingPerformanceChart"></canvas></div>
+                </div>
+                <!-- AGGREGATE SEO & Content Performance Analysis -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Aggregate SEO & Content Performance (Jul-Oct)</h2>
+                    <p class="text-sm text-gray-600 mb-6">Connecting high-intent search terms and popular content to direct sales outcomes.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="bg-gray-50 p-5 rounded-xl border"><h3 class="font-bold text-lg mb-3 text-gray-700">Top Content & Pages</h3><p class="text-sm text-gray-600 mb-4">These pages are the primary entry points for organic traffic.</p><ul class="space-y-3 text-sm"><li class="flex items-start"><svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><div><span class="font-semibold">Homepage</span></div></li><li class="flex items-start"><svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><div><span class="font-semibold">Collection: Room Dividers</span></div></li><li class="flex items-start"><svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><div><span class="font-semibold">Collection: Wall Panels</span></div></li><li class="flex items-start"><svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><div><span class="font-semibold">Blog: Easy Build Temporary Wall</span></div></li></ul></div>
+                        <div class="bg-gray-50 p-5 rounded-xl border"><h3 class="font-bold text-lg mb-3 text-gray-700">Top Performing SEO Keywords</h3><p class="text-sm text-gray-600 mb-4">Ranking for these long-tail keywords brings qualified, problem-aware users.</p><ul class="space-y-3 text-sm"><li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg><div><span class="font-semibold">"best office dividers for noise reduction"</span></div></li><li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg><div><span class="font-semibold">"top-rated modular room dividers"</span></div></li><li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg><div><span class="font-semibold">"modular wall panels for acoustic control"</span></div></li><li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg><div><span class="font-semibold">"acoustic wall art"</span></div></li><li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg><div><span class="font-semibold">"felt ceiling tiles"</span></div></li></ul></div>
+                        <div class="bg-gray-50 p-5 rounded-xl border"><h3 class="font-bold text-lg mb-3 text-gray-700">Sales Correlation & Insight</h3><p class="text-sm text-gray-600 mb-4">SEO efforts translate directly to sales of high-value products.</p><ul class="space-y-3 text-sm"><li class="flex items-start"><svg class="w-5 h-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01"></path></svg><div><span class="font-semibold">Top Seller: Nomad System Room Dividers</span></div></li><li class="flex items-start"><svg class="w-5 h-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01"></path></svg><div><span class="font-semibold">Top Seller: Feltforms Acoustic Tiles</span></div></li></ul><div class="mt-4 pt-4 border-t"><p class="text-sm text-gray-800 font-semibold">Insight:</p><p class="text-sm text-gray-600">There is a clear, direct correlation: users searching for specific solutions like "noise reduction dividers" are landing on the "Room Dividers" collection page and purchasing "Nomad System" products. This validates the content-led SEO strategy.</p></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Tabs -->
+            <div id="content-october" class="hidden space-y-8"></div>
+            <div id="content-september" class="hidden space-y-8"></div>
+            <div id="content-august" class="hidden space-y-8"></div>
+            <div id="content-july" class="hidden space-y-8"></div>
+        </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const ctx = document.getElementById('forecastChart').getContext('2d');
-            let forecastChart;
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DATA ---
+        let forecastChart, marketingPerformanceChart, momChart;
 
-            const labels = ['Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26'];
-            
-            const baseTargets = {
-                pessimistic: { ctr: 0.6, cr: 0.35 },
-                realistic: { ctr: 0.8, cr: 0.5 },
-                optimistic: { ctr: 1.2, cr: 0.75 }
-            };
+        const monthlyData = {
+            'july': { title: 'July', sessions: 5017, addedToCart: 61, reachedCheckout: 54, orders: 10, sales: 6954.89, returningRate: 0.00, cr: 0.20, seoPos: 18.7 },
+            'august': { title: 'August', sessions: 8874, addedToCart: 103, reachedCheckout: 85, orders: 16, sales: 12646.88, returningRate: 0.00, cr: 0.16, seoPos: 20.0 },
+            'september': { title: 'September', sessions: 5721, addedToCart: 54, reachedCheckout: 59, orders: 14, sales: 11572.40, returningRate: 27.27, cr: 0.19, seoPos: 16.6 },
+            'october': { title: 'October', sessions: 6031, addedToCart: 58, reachedCheckout: 63, orders: 17, sales: 12006.58, returningRate: 23.08, cr: 0.28, seoPos: 10.9 }
+        };
 
-            const initialData = {
-                ctr_start: 0.4,
-                cr_start: 0.3,
-            };
-            
-            // Sales data from 'Forecasting.csv'
-            const baseSalesData = [7511.4, 8112.31, 8761.30, 9462.20, 10219.18, 11036.71, 11919.65];
-            const salesScenarios = {
-                pessimistic: baseSalesData.map(d => d * 0.75),
-                realistic: baseSalesData,
-                optimistic: baseSalesData.map(d => d * 1.25)
-            };
-            let currentSalesData = salesScenarios.realistic;
+        const monthlyContentData = {
+            'july': { pages: ['Homepage', 'Collection: Wall Panels', 'Product: Nomad System'], keywords: ['"best value modular office partitions"', '"best office dividers for noise reduction"', '"ceiling tiles for drop ceiling"'], sellers: ['Nomad System Room Dividers', 'Quad Feltforms Ceiling Tiles'], insight: 'Early traffic from broad searches for "value" and "best" dividers successfully led to sales of the core Nomad System, validating the initial keyword targeting strategy.' },
+            'august': { pages: ['Homepage', 'Collection: Wall Panels', 'Collection: Room Dividers'], keywords: ['"acoustic wall art"', '"felt ceiling tiles"', 'Long-tail recommendation keywords'], sellers: ['Tent Feltforms Acoustic Tiles', 'Nomad System Room Dividers'], insight: 'A significant traffic spike this month from more specific, problem-solving keywords like "acoustic wall art" correlated directly with increased sales of Feltforms acoustic products.' },
+            'september': { pages: ['Homepage', 'Collection: Room Dividers', 'Collection: Wall Panels'], keywords: ['"best office dividers for noise reduction"', '"top-rated modular room dividers for open workspace"', '"best modular dividers for quiet offices"'], sellers: ['Twist Feltforms Acoustic Tiles', 'Nomad System Room Dividers'], insight: 'The keyword strategy matured to capture high-intent B2B traffic. Searches for "office dividers" and "quiet offices" directly drove sales for top-tier acoustic and modular products.' },
+            'october': { pages: ['Homepage', 'Collection: Room Dividers', 'Product: Nomad System'], keywords: ['"room dividers acoustic"', '"nomad system room dividers"', '"felt ceiling tiles"'], sellers: ['Nomad System Room Dividers', 'Feltforms Acoustic Tiles'], insight: 'Performance stabilized, with continued success from established commercial keywords. Traffic to the main "Room Dividers" collection consistently converts to sales of the Nomad System.' }
+        };
 
-            const kpiCtr = document.getElementById('kpi-ctr');
-            const kpiCr = document.getElementById('kpi-cr');
-            const kpiAvgSales = document.getElementById('kpi-avg-sales');
-            const kpiTotalSales = document.getElementById('kpi-total-sales');
-            const ctrSlider = document.getElementById('ctr-slider');
-            const crSlider = document.getElementById('cr-slider');
-            const ctrSliderValue = document.getElementById('ctr-slider-value');
-            const crSliderValue = document.getElementById('cr-slider-value');
-            const scenarioButtons = document.querySelectorAll('.scenario-btn');
+        const forecastLabels = ['Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26'];
+        const actualsCount = 4;
+        const baseTargets = { pessimistic: { ctr: 0.9, cr: 0.35, sessionGrowth: 0.03 }, realistic: { ctr: 1.0, cr: 0.5, sessionGrowth: 0.08 }, optimistic: { ctr: 1.3, cr: 0.75, sessionGrowth: 0.12 } };
+        const actualData = { ctr: [0.3, 0.4, 0.5, 0.8], cr: Object.values(monthlyData).map(m => m.cr), sales: Object.values(monthlyData).map(m => m.sales) };
+        const avgAOV = actualData.sales.reduce((sum, sales, i) => { const orders = Object.values(monthlyData)[i].orders; return sum + (orders > 0 ? sales / orders : 0); }, 0) / actualsCount;
 
-            function generateLinearData(start, end, steps) {
-                const data = [];
-                const stepValue = (end - start) / (steps - 1);
-                for (let i = 0; i < steps; i++) {
-                    data.push(start + (stepValue * i));
-                }
-                return data;
-            }
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('main > div');
+        const forecastCtx = document.getElementById('forecastChart')?.getContext('2d');
+        const marketingCtx = document.getElementById('marketingPerformanceChart')?.getContext('2d');
+        const momCtx = document.getElementById('momChart')?.getContext('2d');
 
-            function updateChart(targetCtr, targetCr, salesData) {
-                if (forecastChart) {
-                    forecastChart.destroy();
-                }
-                
-                currentSalesData = salesData; 
-
-                const ctrData = generateLinearData(initialData.ctr_start, targetCtr, labels.length);
-                const crData = generateLinearData(initialData.cr_start, targetCr, labels.length);
-
-                forecastChart = new Chart(ctx, {
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            type: 'bar',
-                            label: 'Click-Through Rate (CTR)',
-                            data: ctrData,
-                            backgroundColor: '#22c55e80',
-                            borderColor: '#16a34a',
-                            borderWidth: 1,
-                            yAxisID: 'y'
-                        }, {
-                            type: 'bar',
-                            label: 'Conversion Rate (CR)',
-                            data: crData,
-                            backgroundColor: '#8b5cf680',
-                            borderColor: '#7c3aed',
-                            borderWidth: 1,
-                            yAxisID: 'y'
-                        }, {
-                            type: 'line',
-                            label: 'Projected Sales (USD)',
-                            data: salesData,
-                            borderColor: '#f59e0b',
-                            backgroundColor: '#f59e0b20',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4,
-                            yAxisID: 'y1'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false,
-                        },
-                        scales: {
-                            y: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Rate (%)'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return value.toFixed(2) + '%';
-                                    }
-                                }
-                            },
-                             y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                grid: {
-                                    drawOnChartArea: false, 
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Sales (USD)'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return '$' + (value / 1000).toFixed(1) + 'k';
-                                    }
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) { label += ': '; }
-                                        if (context.parsed.y !== null) {
-                                             if (context.dataset.yAxisID === 'y1') {
-                                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
-                                            } else {
-                                                label += context.parsed.y.toFixed(2) + '%';
-                                            }
-                                        }
-                                        return label;
-                                    }
-                                }
-                            },
-                            legend: {
-                                position: 'top',
-                                labels: {
-                                  usePointStyle: true,
-                                  boxWidth: 8
-                                }
-                            }
-                        }
-                    }
-                });
-                
-                // Update KPIs
-                kpiCtr.textContent = `${targetCtr.toFixed(1)}%`;
-                kpiCr.textContent = `${targetCr.toFixed(2)}%`;
-                const totalSales = salesData.reduce((a, b) => a + b, 0);
-                const avgSales = totalSales / salesData.length;
-                kpiTotalSales.textContent = `$${(totalSales / 1000).toFixed(1)}k`;
-                kpiAvgSales.textContent = `$${(avgSales / 1000).toFixed(1)}k`;
-            }
-
-            function setActiveButton(activeBtnId) {
-                scenarioButtons.forEach(btn => {
-                    btn.classList.remove('active', 'bg-blue-100', 'border-blue-300', 'bg-red-100', 'border-red-300', 'bg-green-100', 'border-green-300');
-                    btn.classList.add('bg-gray-100', 'border-gray-200');
-
-                    if (btn.id === activeBtnId) {
-                         if(btn.id.includes('pessimistic')) {
-                             btn.classList.add('active', 'bg-red-100', 'border-red-300');
-                         } else if (btn.id.includes('realistic')) {
-                             btn.classList.add('active', 'bg-blue-100', 'border-blue-300');
-                         } else if (btn.id.includes('optimistic')) {
-                              btn.classList.add('active', 'bg-green-100', 'border-green-300');
-                         }
-                    }
-                });
-            }
-
-            document.getElementById('pessimistic-btn').addEventListener('click', () => {
-                const targets = baseTargets.pessimistic;
-                updateChart(targets.ctr, targets.cr, salesScenarios.pessimistic);
-                ctrSlider.value = targets.ctr;
-                crSlider.value = targets.cr;
-                ctrSliderValue.textContent = `${targets.ctr.toFixed(1)}%`;
-                crSliderValue.textContent = `${targets.cr.toFixed(2)}%`;
-                setActiveButton('pessimistic-btn');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.add('hidden'));
+                tab.classList.add('active');
+                const contentId = tab.id.replace('tab-', 'content-');
+                document.getElementById(contentId).classList.remove('hidden');
+                if (contentId === 'content-forecast' && forecastChart) forecastChart.resize();
+                if (contentId === 'content-funnel' && marketingPerformanceChart) marketingPerformanceChart.resize();
+                if (contentId === 'content-mom' && momChart) momChart.resize();
             });
-
-            document.getElementById('realistic-btn').addEventListener('click', () => {
-                const targets = baseTargets.realistic;
-                updateChart(targets.ctr, targets.cr, salesScenarios.realistic);
-                ctrSlider.value = targets.ctr;
-                crSlider.value = targets.cr;
-                ctrSliderValue.textContent = `${targets.ctr.toFixed(1)}%`;
-                crSliderValue.textContent = `${targets.cr.toFixed(2)}%`;
-                setActiveButton('realistic-btn');
-            });
-
-            document.getElementById('optimistic-btn').addEventListener('click', () => {
-                const targets = baseTargets.optimistic;
-                updateChart(targets.ctr, targets.cr, salesScenarios.optimistic);
-                ctrSlider.value = targets.ctr;
-                crSlider.value = targets.cr;
-                ctrSliderValue.textContent = `${targets.ctr.toFixed(1)}%`;
-                crSliderValue.textContent = `${targets.cr.toFixed(2)}%`;
-                setActiveButton('optimistic-btn');
-            });
-
-            ctrSlider.addEventListener('input', (e) => {
-                const newCtr = parseFloat(e.target.value);
-                const currentCr = parseFloat(crSlider.value);
-                ctrSliderValue.textContent = `${newCtr.toFixed(1)}%`;
-                updateChart(newCtr, currentCr, currentSalesData);
-                setActiveButton(null); // Deselect scenario buttons for custom mode
-            });
-            
-            crSlider.addEventListener('input', (e) => {
-                const newCr = parseFloat(e.target.value);
-                const currentCtr = parseFloat(ctrSlider.value);
-                crSliderValue.textContent = `${newCr.toFixed(2)}%`;
-                updateChart(currentCtr, newCr, currentSalesData);
-                setActiveButton(null);
-            });
-
-
-            // Initial Chart Load
-            updateChart(baseTargets.realistic.ctr, baseTargets.realistic.cr, salesScenarios.realistic);
-            setActiveButton('realistic-btn');
-            ctrSlider.value = baseTargets.realistic.ctr;
-            crSlider.value = baseTargets.realistic.cr;
-            ctrSliderValue.textContent = `${baseTargets.realistic.ctr.toFixed(1)}%`;
-            crSliderValue.textContent = `${baseTargets.realistic.cr.toFixed(2)}%`;
-
         });
+        
+        function createDeepDiveHTML(monthKey) {
+            const data = monthlyData[monthKey];
+            const content = monthlyContentData[monthKey];
+            const aov = data.orders > 0 ? data.sales / data.orders : 0;
+            const sessionToCartRate = (data.addedToCart / data.sessions * 100).toFixed(2);
+            const checkoutReachedRate = (data.reachedCheckout / data.sessions * 100).toFixed(2);
+            const checkoutConversionRate = data.reachedCheckout > 0 ? (data.orders / data.reachedCheckout * 100).toFixed(2) : "0.00";
+
+            return `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800">${data.title} 2025 Performance Deep Dive</h2>
+                    <p class="text-sm text-gray-600 mb-6">A detailed look at the customer journey and key metrics for ${data.title}.</p>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-2 text-white">
+                        <div class="funnel-step w-full md:w-1/4 bg-blue-500 p-4 rounded-lg text-center"><h3 class="text-lg font-bold">Awareness</h3><p class="text-3xl font-bold">${data.sessions.toLocaleString()}</p><p class="text-sm">Total Sessions</p></div>
+                        <div class="funnel-step w-full md:w-1/4 bg-indigo-500 p-4 rounded-lg text-center"><h3 class="text-lg font-bold">Consideration</h3><p class="text-3xl font-bold">${data.addedToCart}</p><p class="text-sm">Added to Cart</p></div>
+                        <div class="funnel-step w-full md:w-1/4 bg-purple-500 p-4 rounded-lg text-center"><h3 class="text-lg font-bold">Intent</h3><p class="text-3xl font-bold">${data.reachedCheckout}</p><p class="text-sm">Reached Checkout</p></div>
+                        <div class="funnel-step w-full md:w-1/4 bg-green-500 p-4 rounded-lg text-center"><h3 class="text-lg font-bold">Conversion</h3><p class="text-3xl font-bold">${data.orders}</p><p class="text-sm">Total Orders</p></div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">${data.title} SEO & Content Performance Analysis</h2>
+                    <p class="text-sm text-gray-600 mb-6">Connecting search terms and content to sales outcomes for ${data.title}.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="bg-gray-50 p-5 rounded-xl border"><h3 class="font-bold text-lg mb-3 text-gray-700">Top Content & Pages</h3><ul class="space-y-2 text-sm">${content.pages.map(p => `<li class="flex items-start"><svg class="w-4 h-4 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p>${p}</p></li>`).join('')}</ul></div>
+                        <div class="bg-gray-50 p-5 rounded-xl border"><h3 class="font-bold text-lg mb-3 text-gray-700">Top Performing SEO Keywords</h3><ul class="space-y-2 text-sm">${content.keywords.map(k => `<li class="flex items-start"><svg class="w-4 h-4 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><p>${k}</p></li>`).join('')}</ul></div>
+                        <div class="bg-gray-50 p-5 rounded-xl border"><h3 class="font-bold text-lg mb-3 text-gray-700">Sales Correlation & Insight</h3><ul class="space-y-2 text-sm">${content.sellers.map(s => `<li class="flex items-start"><svg class="w-4 h-4 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path></svg><p class="font-semibold">${s}</p></li>`).join('')}</ul><div class="mt-4 pt-4 border-t"><p class="text-sm text-gray-600">${content.insight}</p></div></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function generateLinearData(start, end, steps) { const data = []; if (steps <= 1) return [end]; const stepValue = (end - start) / (steps - 1); for (let i = 0; i < steps; i++) { data.push(start + (stepValue * i)); } return data; }
+
+        function updateForecastChart(scenario) {
+            if (!forecastCtx) return;
+            if (forecastChart) forecastChart.destroy();
+            const forecastSteps = forecastLabels.length - actualsCount;
+            const lastActualCtr = actualData.ctr[actualsCount - 1];
+            const lastActualCr = actualData.cr[actualsCount - 1];
+            const forecastCtr = generateLinearData(lastActualCtr, scenario.ctr, forecastSteps + 1).slice(1);
+            const forecastCr = generateLinearData(lastActualCr, scenario.cr, forecastSteps + 1).slice(1);
+            let lastSessions = monthlyData.october.sessions;
+            const forecastSessions = [];
+            for (let i = 0; i < forecastSteps; i++) { lastSessions *= (1 + scenario.sessionGrowth); forecastSessions.push(lastSessions); }
+            const forecastSales = forecastSessions.map((sessions, i) => sessions * (forecastCr[i] / 100) * avgAOV);
+            const ctrData = [...actualData.ctr, ...forecastCtr];
+            const crData = [...actualData.cr, ...forecastCr];
+            const salesData = [...actualData.sales, ...forecastSales];
+            forecastChart = new Chart(forecastCtx, {
+                data: {
+                    labels: forecastLabels,
+                    datasets: [
+                        { type: 'bar', label: 'CTR', data: ctrData, backgroundColor: (ctx) => ctx.dataIndex < actualsCount ? '#16a34a' : '#22c55e80', yAxisID: 'y' },
+                        { type: 'bar', label: 'CR', data: crData, backgroundColor: (ctx) => ctx.dataIndex < actualsCount ? '#7c3aed' : '#8b5cf680', yAxisID: 'y' },
+                        { type: 'line', label: 'Sales (USD)', data: salesData, borderColor: '#f59e0b', backgroundColor: '#f59e0b20', borderWidth: 3, fill: true, tension: 0.4, yAxisID: 'y1' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { y: { type: 'linear', display: true, position: 'left', beginAtZero: true, title: { display: true, text: 'Rate (%)' }, ticks: { callback: (v) => v.toFixed(2) + '%' } }, y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Sales (USD)' }, ticks: { callback: (v) => '$' + (v / 1000).toFixed(1) + 'k' } } }, plugins: { legend: { position: 'top' } } }
+            });
+            updateKPIs(scenario.ctr, scenario.cr, salesData);
+        }
+        
+        function createMarketingPerformanceChart() {
+             if (!marketingCtx) return;
+            const marketingFunnelData = { labels: ['July 25', 'Aug 25', 'Sep 25', 'Oct 25'], sessions: Object.values(monthlyData).map(m => m.sessions), avgPosition: Object.values(monthlyData).map(m=>m.seoPos), sales: actualData.sales };
+            marketingPerformanceChart = new Chart(marketingCtx, {
+                data: {
+                    labels: marketingFunnelData.labels,
+                    datasets: [
+                        { type: 'bar', label: 'Organic Sessions', data: marketingFunnelData.sessions, backgroundColor: '#3b82f680', yAxisID: 'y' },
+                        { type: 'line', label: 'Avg. SEO Position', data: marketingFunnelData.avgPosition, borderColor: '#ec4899', borderWidth: 3, tension: 0.4, yAxisID: 'y1' },
+                        { type: 'line', label: 'Monthly Sales (USD)', data: marketingFunnelData.sales, borderColor: '#f59e0b', backgroundColor: '#f59e0b20', fill: true, borderWidth: 3, tension: 0.4, yAxisID: 'y2' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { y: { type: 'linear', display: true, position: 'left', beginAtZero: true, title: { display: true, text: 'Sessions' } }, y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, reverse: true, title: { display: true, text: 'Avg. SEO Position' } }, y2: { type: 'linear', display: false } }, plugins: { legend: { position: 'top' } } }
+            });
+        }
+        
+        function createMoMChart() {
+            if (!momCtx) return;
+            momChart = new Chart(momCtx, {
+                data: {
+                    labels: Object.values(monthlyData).map(m => m.title),
+                    datasets: [
+                        { type: 'line', label: 'Sales (USD)', data: actualData.sales, borderColor: '#16a34a', backgroundColor: '#16a34a80', yAxisID: 'y', borderWidth: 3, tension: 0.4, fill: true },
+                        { type: 'line', label: 'Sessions', data: Object.values(monthlyData).map(m => m.sessions), borderColor: '#3b82f6', backgroundColor: '#3b82f680', yAxisID: 'y1', borderWidth: 3, tension: 0.4, fill: true },
+                        { type: 'line', label: 'Avg. SEO Ranking', data: Object.values(monthlyData).map(m => m.seoPos), borderColor: '#ec4899', borderWidth: 3, tension: 0.4, yAxisID: 'y2' }
+                    ]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, 
+                    scales: { 
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Sales (USD)' }, ticks: { callback: (v) => '$' + (v/1000).toFixed(1) + 'k' } }, 
+                        y1: { type: 'linear', display: false, title: { display: true, text: 'Sessions' } }, 
+                        y2: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, reverse: true, title: { display: true, text: 'Avg. Position (Lower is Better)' } } 
+                    }, 
+                    plugins: { legend: { position: 'top' } } 
+                }
+            });
+        }
+
+        function updateKPIs(targetCtr, targetCr, salesData) { const kpiCtr = document.getElementById('kpi-ctr'); const kpiCr = document.getElementById('kpi-cr'); const kpiAvgSales = document.getElementById('kpi-avg-sales'); const kpiTotalSales = document.getElementById('kpi-total-sales'); if(kpiCtr) kpiCtr.textContent = `${targetCtr.toFixed(1)}%`; if(kpiCr) kpiCr.textContent = `${targetCr.toFixed(2)}%`; const totalSales = salesData.reduce((a, b) => a + b, 0); if(kpiTotalSales) kpiTotalSales.textContent = `$${(totalSales / 1000).toFixed(1)}k`; if(kpiAvgSales) kpiAvgSales.textContent = `$${(totalSales / salesData.length / 1000).toFixed(1)}k`; }
+        function updateFunnelKPIs() { const totalSessions = Object.values(monthlyData).reduce((sum, m) => sum + m.sessions, 0); const totalAddedToCart = Object.values(monthlyData).reduce((sum, m) => sum + m.addedToCart, 0); const totalReachedCheckout = Object.values(monthlyData).reduce((sum, m) => sum + m.reachedCheckout, 0); const totalOrders = Object.values(monthlyData).reduce((sum, m) => sum + m.orders, 0); document.getElementById('kpi-total-sessions').textContent = `${(totalSessions / 1000).toFixed(1)}k`; document.getElementById('kpi-added-cart').textContent = totalAddedToCart; document.getElementById('kpi-reached-checkout').textContent = totalReachedCheckout; document.getElementById('kpi-total-orders').textContent = totalOrders; }
+        function setupScenarioButtons() { const scenarioButtons = document.querySelectorAll('.scenario-btn'); const setActiveButton = (activeBtnId) => { scenarioButtons.forEach(btn => { btn.classList.remove('active', 'bg-blue-100', 'border-blue-300', 'bg-red-100', 'border-red-300', 'bg-green-100', 'border-green-300'); if (btn.id === activeBtnId) { if(btn.id.includes('pessimistic')) btn.classList.add('active', 'bg-red-100', 'border-red-300'); else if (btn.id.includes('realistic')) btn.classList.add('active', 'bg-blue-100', 'border-blue-300'); else if (btn.id.includes('optimistic')) btn.classList.add('active', 'bg-green-100', 'border-green-300'); } }); }; document.getElementById('pessimistic-btn')?.addEventListener('click', () => { updateForecastChart(baseTargets.pessimistic); setActiveButton('pessimistic-btn'); }); document.getElementById('realistic-btn')?.addEventListener('click', () => { updateForecastChart(baseTargets.realistic); setActiveButton('realistic-btn'); }); document.getElementById('optimistic-btn')?.addEventListener('click', () => { updateForecastChart(baseTargets.optimistic); setActiveButton('optimistic-btn'); }); }
+
+        Object.keys(monthlyData).forEach(key => {
+            const container = document.getElementById(`content-${key}`);
+            if (container) container.innerHTML = createDeepDiveHTML(key);
+        });
+
+        createMoMChart();
+        updateForecastChart(baseTargets.realistic);
+        createMarketingPerformanceChart();
+        updateFunnelKPIs();
+        setupScenarioButtons();
+    });
     </script>
 </body>
 </html>
